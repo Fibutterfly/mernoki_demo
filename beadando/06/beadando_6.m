@@ -1,18 +1,33 @@
-% testing odebvp solver/ test_odebvp1
+%% Header
+%{
+    Author: Filep Illés Attila (HS3SS4)
+    2023/05/14
+    HW 6
+%}
+%% $y'' + (a + x^3)*y' + (1 - x^2)*y = e^{1-b*x^2}$ Where: $y(0)=0, y(1)=0$ 
+% 
+% 
+%
 % for solving linear bvp of the form
 %
 %     y''+p(x)y'+q(x)y=r(x)
-%
+% * p(x) = (a + x^3)
+% * q(x) = (1-x^2)
+% * r(x) = e^{1-b*x^2}
 % with boundary conditions
 %
 %     y(a)=alfa, y(b)=beta
-%
+% * a = 0
+% * alfa = 0
+% * b = 1
+% * beta = 0
 % on the equidistant set
 %
 %  x(i)=a+(i-1)h, h=(b-a)/(N+1)
 % called routines:
-% - odepp1
-% - 3 coefficient functions for p,q and r
+% * odepp1
+% * 3 coefficient functions for px,qx and rx
+% 
 %
 clear all
 clc
@@ -28,29 +43,35 @@ N=99;
 funp='px';
 funq='qx';
 funr='rx';
-%
+
 [x,y]=odepp1(funp,funq,funr,a,b,alfa,beta,N);
 [x2,y2]=odepp1(funp,funq,funr,a,b,alfa,beta,2*N+1);
-%
-plot(x,y,'bo-',x2,y2,'r*-')
+
+subplot(2,1,1);
+plot(x,y,'bo-','DisplayName',strcat(num2str(N),' darab ponttal'));
+hold on;
+plot(x2,y2,'r*-','DisplayName',strcat(num2str(2*N+1),' darab ponttal'));
+hold off;
 grid on
 title('approximate solution of ODE BVP')
 xlabel('x')
 ylabel('y')
-pause
-close
+legend
 % the approximate error estimate by Runge's rule
 nx=length(x);
 for i=1:nx
     y2x(i)=y2(2*i-1);
 end
+subplot(2,1,2);
 plot(x,abs(y-y2x),'r-')
 title('estimated error')
 grid on
-pause
-close
 disp(['max estimated error =',num2str(max(abs(y-y2x)))]) 
-
+%% finding the anwer for x=0.3, 0.75
+keys = [0.3, 0.75];
+indexes = finder(x, keys);
+values = y(indexes.values);
+answer = [keys;values]
 
 
 
